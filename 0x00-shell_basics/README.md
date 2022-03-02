@@ -22,4 +22,6 @@
 
 10-back - script that changes the working directory to the previous one
 
+11-lists - script that lists all files in the current directory, the parent directory and the /boot directory
+
 
