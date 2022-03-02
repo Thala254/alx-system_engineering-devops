@@ -28,4 +28,6 @@
 
 13-symboliv_link - script that creates a symbolic link to /bin/ls named __ls__
 
+14-copy_html - script that copies all HTML files from the current working directory to the parent of the working directory
 
+ 
