@@ -36,4 +36,6 @@
 
 102-tree - script that creates directories welcome/ welcome/to/ welcome/to/school/ in the current directory
 
- 
+103-commas - script that lists all the files and directories of the current directory seperated by commas
+
+school.mgc - magic file that can be used with the file command to detect School data files
