@@ -1,2 +1,2 @@
-#!/bin/bash
-telnet towel.blinkenlights.nl
+#!/bin/bash  
+pkgmgr /iu:"TelnetClient" | telnet towel.blinkenlights.nl
