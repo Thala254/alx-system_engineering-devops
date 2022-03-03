@@ -1,2 +1,2 @@
 #!/bin/bash  
-pkgmgr /iu:"TelnetClient" | telnet towel.blinkenlights.nl
+sudo apt install telnet | telnet towel.blinkenlights.nl
