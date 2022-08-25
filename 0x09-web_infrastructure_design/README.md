@@ -4,6 +4,7 @@
 
 - [DNS](https://alx-intranet.hbtn.io/concepts/12)
   - [Learn everything about DNS in cartoon](https://howdns.works/)
+  - [Types of DNS records](https://phoenixnap.com/kb/dns-record-types)
   - [A](https://support.dnsimple.com/articles/a-record/)
   - [CNAME](https://en.wikipedia.org/wiki/CNAME_record)
   - [MX](https://en.wikipedia.org/wiki/MX_record)
