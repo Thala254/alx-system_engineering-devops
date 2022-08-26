@@ -93,6 +93,32 @@ Requirements:
 
 **Solution [0-simple_web_stack](0-simple_web_stack)**
 
+![[task0]()](images/task0.jpg)
+
+- A server is generally located in a data center and can be both virtual or physical.
+
+- A server runs an operating system which enables it to run the services that it offers and it communicates over a network using TCP/IP protocol.
+
+- There are two types of servers in the setup:
+
+  - A web server - it's role is to serve static webpages.
+
+  - An application server - it's role is to compute dynamic content and has a database.
+
+- A database stores data for the application.
+
+- The browser first checks if the IP of the domain is available locally, if it isn't available, it looks for the IP in the DNS records with help of the ISP.
+
+- The purpose of the DNS in the diagram is to translate the record of the domain name to an IP address.
+
+- www.foobar.com in this context is an A record since it resolves to an IP address
+
+- The setup has the server has a single point of failure (SPOF) since it doesn't imlement redundancy.
+
+- Therefore, upon deployment of updates and restarting the server, downtime would be experienced since the system wasn't redundant.
+
+- This setup cannot scale as a single server cannot handle too much load alone and hence extra servers and a load balancer should be added to facilitate handling of more load
+
 ### 1.Distributed web infrastructure
 
 On a whiteboard, design a three server web infrastructure that hosts the website `www.foobar.com`.
@@ -112,12 +138,28 @@ Requirements:
   - Is your load-balancer enabling an Active-Active or Active-Passive setup, explain the difference between both
   - How a database Primary-Replica (Master-Slave) cluster works
   - What is the difference between the Primary node and the Replica node in regard to the application
-- You must be able to explain what the issues are with this infrastructure:
+- You must be able to explain what the issues are with this infrastructure
   - Where are SPOF
   - Security issues (no firewall, no HTTPS)
   - No monitoring
 
 **Solution [1-distributed_web_infrastructure](1-distributed_web_infrastructure)**
+
+![[task1]()](images/task1.jpg)
+
+- A new server containing a web server, application server and same code base has been added to facilitate redundancy.
+
+- A load balancer has been added to distribute the traffic between the two servers and is configured as an active-active setup.
+
+- The MYSQL Master-Replica used replication to keep the daa synchronized.
+
+- The master database node accepts reads/writes while the Replica only accepts reads.
+
+- The load balancer is still a SPOF since it's not redundant.
+
+- There's no firewall on the load balancer nor the servers hence the traffic is unencrypted.
+
+- There's no monitoring in the setup.
 
 ### 2.Secured and monitored web infrastructure
 
@@ -143,6 +185,24 @@ Requirements:
 
 **Solution [2-secured_and_monitored_web_infrastructure](2-secured_and_monitored_web_infrastructure)**
 
+![[task2]()](images/task2.jpg)
+
+- Firewall filters network traffic in and out a machine
+
+- HTTPS is setup to encrypt the network traffic hence intruders cannot intercept the traffic.
+
+- Monitoring is used to check the status of the setup and its setup is composed of a client collecting data and sending it to the monitoring system.
+
+- Terminating SSL at the load balancer level is an issue because the traffic between the load balancer and the web server is unencrypted hence valnurable to intrusion.
+
+- Having servers with all the same components (database, web server,and application server) might be a problem because:
+
+  - Their consumption will not grow the same way between each of them.
+
+  - When there's maintenance performed on a server for a specific component, it will affect the other components on it.
+
+- Load balancer is still a SPOF because it's not redundant.
+
 ### 3.Scale up
 
 Readme
@@ -159,3 +219,9 @@ Requirements:
   - For every additional element, why you are adding it
 
 **Solution [3-scale_up](3-scale_up)**
+
+![[task3]()](images/Task3.jpg)
+
+- More servers have been added to increase redundancy in the setup. Moreover, each server component works in isolation to further facilitate reliability of the setup.
+- An additional load balancer was added to ensure that the load balance stops being a SPOF by increasing its redundancy.
+- The load balancer was configured as a cluster to ensure that if one fails, the other takes over. The setup is active-passive.
