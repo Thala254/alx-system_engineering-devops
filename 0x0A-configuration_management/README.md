@@ -35,6 +35,8 @@ You do **not** need to attempt to upgrade versions. This project is simply a set
 $ gem install puppet-lint
 ```
 
+## Objectives
+
 ## Tasks
 
 ### 0. Create a file
