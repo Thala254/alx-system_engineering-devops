@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
 # script that sets port to 80
-rm /etc/nginx/sites-enabled/default
-ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
-sed -i 's/8080/80/' /etc/nginx/sites-available/default
+sed -i 's/8080/80/g' /etc/nginx/sites-enabled/default
+pkill -1 nginx
