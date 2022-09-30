@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+# script that sets port to 80
+sed -i "s/8080/80/g" /etc/nginx/sites-available/default
+service nginx restart
+kill -9 "$(cat /run/nginx.pid)"
