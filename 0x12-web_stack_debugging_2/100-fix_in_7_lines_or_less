@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# configures nginx to be run by user nginx
+pkill "apache2"
+sudo sed -i 's/#user www-data/nginx/g' /etc/nginx/nginx.conf
+sudo sed -i 's/\<80\>/&80/' /etc/nginx/sites-available/default
+sudo chmod 644 /etc/nginx/nginx.conf
+sudo -u nginx service nginx restart
