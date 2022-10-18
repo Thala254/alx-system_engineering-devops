@@ -1,96 +1,112 @@
 #!/usr/bin/python3
-"""script that queries an api and gives responses in json format"""
-from collections import OrderedDict
-from sys import argv
-import csv
-import json
-import requests
+"""
+Script to make request from an API
+"""
 
 
-def count(todos=None):
-    """Counts ompleted tasks"""
-    counter = 0
-    for todo in todos:
-        if todo.get('completed') is True:
-            counter += 1
-    return counter
+def counter(completed=None):
+    """Just to count completed task"""
+
+    ct = 0
+    for arg in todo:
+        if arg.get('completed') is True:
+            ct += 1
+    return ct
 
 
-def to_standard_output(user=None, todos=None):
-    """prints reponse from api to standard output"""
-    print("Employee {} is done with tasks ({}/{}):".format(
+def print_response(payload=None, payload2=None):
+    """print response object"""
+
+    print('Employee {} is done with tasks({}/{}):'.format(
         user[0].get('name'),
-        count(todos),
-        len(todos)))
-    for todo in todos:
-        if todo.get('completed') is True:
-            print("\t {}".format(todo.get('title')))
+        counter(todo),
+        len(todo)))
+
+    for arg in todo:
+        if arg.get('completed') is True:
+            print("\t {}".format(arg.get('title')))
 
 
-def to_csv(user=None, todos=None, file_name=None):
-    """prints response from an api to csv format"""
-    with open(file_name, 'w') as csv_file:
-        fields = ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"]
-        writer = csv.DictWriter(csv_file,
-                                fieldnames=fields,
+def save_to_csv(payload=None, payload2=None, file_name=None):
+    """create new CSV file and load"""
+
+    with open(file_name, 'w') as csvfile:
+        fieldnames = ["USER_ID",
+                      "USERNAME",
+                      "TASK_COMPLETED_STATUS",
+                      "TASK_TITLE"]
+        writer = csv.DictWriter(csvfile,
+                                fieldnames=fieldnames,
                                 quoting=csv.QUOTE_ALL)
-        for todo in todos:
-            writer.writerow({"USER_ID": todo.get('userId'),
+        for arg in todo:
+            writer.writerow({"USER_ID": arg.get('userId'),
                              "USERNAME": user[0].get('username'),
-                             "TASK_COMPLETED_STATUS": todo.get('completed'),
-                             "TASK_TITLE": todo.get('title')})
+                             "TASK_COMPLETED_STATUS": arg.get('completed'),
+                             "TASK_TITLE": arg.get('title')})
 
 
-def to_json(user=None, todos=None, file_name=None):
-    """prints response from an api in json format"""
-    with open(file_name, 'w') as json_file:
-        task_dict = OrderedDict()
-        task_objs = []
-        for todo in todos:
-            task_dict['task'] = todo.get('title')
-            task_dict['completed'] = todo.get('completed')
-            task_dict['username'] = user[0].get('username')
-            task_objs.append(task_dict)
-            task_dict = OrderedDict()
-        data = {argv[1]: task_objs}
-        json.dump(data, json_file)
+def save_to_json(payload=None, payload2=None, file_name=None):
+    """send response data to a JSON file"""
+
+    with open(file_name, 'w') as wfile:
+        d = OrderedDict()
+        all_objs = []
+        for arg in todo:
+            d['task'] = arg.get('title')
+            d['completed'] = arg.get('completed')
+            d["username"] = user[0].get('username')
+            all_objs.append(d)
+            d = OrderedDict()
+        data = {
+            argv[1]: all_objs
+        }
+        json.dump(data, wfile)
 
 
-def to_json_all(users=None, todos=None, file_name=None):
-    """prints response from an api in json format"""
-    with open(file_name, 'w') as employees_file:
+def save_all_to_json(payload=None, payload2=None, file_name=None):
+    """save all response object data to a JSON file"""
+
+    with open(file_name, 'w') as wfile:
         data = {}
-        for user in users:
-            user_obj = []
-            id = user.get('id')
-            for todo in todos:
-                task_dict = OrderedDict()
-                if id == todo.get('userId'):
-                    task_dict['task'] = todo.get('title')
-                    task_dict['completed'] = todo.get('completed')
-                    task_dict['username'] = user.get('username')
-                    user_obj.append(task_dict)
-            data[id] = user_obj
-        json.dump(data, employees_file)
+        for each in user:
+            all_objs = []
+            id = each.get('id')
+            for arg in todo:
+                d = OrderedDict()
+                if id == arg.get('userId'):
+                    d["username"] = each.get('username')
+                    d['task'] = arg.get('title')
+                    d['completed'] = arg.get('completed')
+                    all_objs.append(d)
+            data[id] = all_objs
+        json.dump(data, wfile)
 
 
 if __name__ == "__main__":
+    import requests
+    import json
+    import csv
+    from sys import argv
+    from collections import OrderedDict
+
     try:
-        user_payload = {'id': argv[1]}
-        todo_payload = {'userId': argv[1]}
-        json_file = f"{argv[1].json}"
-        csv_file = f"{argv[1].csv}"
-    except Exception:
-        user_payload = {}
-        todo_payload = {}
-        json_file = 'todo_all_employees.json'
+        payload = {'id': argv[1]}
+        payload2 = {'userId': argv[1]}
+        json_file = argv[1] + ".json"
+        csv_file = argv[1] + ".csv"
+    except:
+        payload = {}
+        payload2 = {}
+        json_file = "todo_all_employees.json"
+
     user = requests.get('https://jsonplaceholder.typicode.com/users',
-                        params=user_payload).json()
-    todos = requests.get('https://jsonplaceholder.typicode.com/todos',
-                         params=todo_payload).json()
+                        params=payload).json()
+    todo = requests.get('https://jsonplaceholder.typicode.com/todos',
+                        params=payload2).json()
+
     try:
-        to_standard_output(user, todos)
-        to_csv(user, todos, csv_file)
-        to_json(user, todos, json_file)
-    except Exception:
-        to_json_all(user, todos, json_file)
+        save_to_csv(user, todo, csv_file)
+        save_to_json(user, todo, json_file)
+        print_response(user, todo)
+    except:
+        save_all_to_json(user, todo, json_file)
