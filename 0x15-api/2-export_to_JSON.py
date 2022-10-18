@@ -2,82 +2,68 @@
 """
 Script to make request from an API
 """
+from collections import OrderedDict
+from sys import argv
+import csv
+import json
+import requests
 
 
-def counter(completed=None):
-    """Just to count completed task"""
+def count(todos=None):
+    """Counts ompleted tasks"""
+    counter = 0
+    for todo in todos:
+        if todo.get('completed') is True:
+            counter += 1
+    return counter
 
-    ct = 0
-    for arg in todo:
-        if arg.get('completed') is True:
-            ct += 1
-    return ct
 
-
-def print_response(payload=None, payload2=None):
-    """print response object"""
-
-    print('Employee {} is done with tasks({}/{}):'.format(
+def to_standard_output(user=None, todos=None):
+    """prints reponse from api to standard output"""
+    print("Employee {} is done with tasks ({}/{}):".format(
         user[0].get('name'),
-        counter(todo),
-        len(todo)))
+        count(todos),
+        len(todos)))
+    for todo in todos:
+        if todo.get('completed') is True:
+            print("\t {}".format(todo.get('title')))
 
-    for arg in todo:
-        if arg.get('completed') is True:
-            print("\t {}".format(arg.get('title')))
 
-
-def to_csv(payload=None, payload2=None):
-    """create new CSV file and load"""
-
-    with open(argv[1] + ".csv", 'w') as csvfile:
-        fieldnames = ["USER_ID",
-                      "USERNAME",
-                      "TASK_COMPLETED_STATUS",
-                      "TASK_TITLE"]
-        writer = csv.DictWriter(csvfile,
-                                fieldnames=fieldnames,
+def to_csv(user=None, todos=None):
+    """prints response from an api to csv format"""
+    with open(f'{argv[1]}.csv', 'w') as csv_file:
+        fields = ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"]
+        writer = csv.DictWriter(csv_file,
+                                fieldnames=fields,
                                 quoting=csv.QUOTE_ALL)
-        for arg in todo:
-            writer.writerow({"USER_ID": arg.get('userId'),
+        for todo in todos:
+            writer.writerow({"USER_ID": todo.get('userId'),
                              "USERNAME": user[0].get('username'),
-                             "TASK_COMPLETED_STATUS": arg.get('completed'),
-                             "TASK_TITLE": arg.get('title')})
+                             "TASK_COMPLETED_STATUS": todo.get('completed'),
+                             "TASK_TITLE": todo.get('title')})
 
 
-def to_json(payload=None, payload2=None):
-    """send response data to a JSON file"""
-
-    with open(argv[1] + '.json', 'w') as wfile:
-        d = OrderedDict()
-        all_objs = []
-        for arg in todo:
-            d['task'] = arg.get('title')
-            d['completed'] = arg.get('completed')
-            d["username"] = user[0].get('username')
-            all_objs.append(d)
-            d = OrderedDict()
-        data = {
-            argv[1]: all_objs
-        }
-        json.dump(data, wfile)
+def to_json(user=None, todos=None):
+    """prints response from an api in json format"""
+    with open(f"{argv[1]}.json", 'w') as json_file:
+        task_dict = OrderedDict()
+        task_objs = []
+        for todo in todos:
+            task_dict['task'] = todo.get('title')
+            task_dict['completed'] = todo.get('completed')
+            task_dict['username'] = user[0].get('username')
+            task_objs.append(task_dict)
+            task_dict = OrderedDict()
+        data = {argv[1]: task_objs}
+        json.dump(data, json_file)
 
 
 if __name__ == "__main__":
-    import requests
-    import json
-    import csv
-    from sys import argv
-    from collections import OrderedDict
-
-    payload = {'id': argv[1]}
+    payload = {'id': int(argv[1])}
     user = requests.get('https://jsonplaceholder.typicode.com/users',
                         params=payload).json()
-
-    payload2 = {'userId': argv[1]}
-    todo = requests.get('https://jsonplaceholder.typicode.com/todos',
-                        params=payload2).json()
-
-    print_response(user, todo)
-    to_csv(user, todo)
-    to_json(user, todo)
+    payload1 = {'userId': int(argv[1])}
+    todos = requests.get('https://jsonplaceholder.typicode.com/todos',
+                         params=payload1).json()
+    to_standard_output(user, todos)
+    to_csv(user, todos)
