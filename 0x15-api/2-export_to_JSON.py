@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""script that queries an api and gives responses in json format"""
+"""
+script that fetches responses from an api and exports output in csv format
+"""
 from collections import OrderedDict
 from sys import argv
 import csv
@@ -43,7 +45,7 @@ def to_csv(user=None, todos=None):
 
 def to_json(user=None, todos=None):
     """prints response from an api in json format"""
-    with open(f'{argv[1]}.json', 'w') as json_file:
+    with open(f"{argv[1]}.json", 'w') as json_file:
         task_dict = OrderedDict()
         task_objs = []
         for todo in todos:
@@ -57,12 +59,11 @@ def to_json(user=None, todos=None):
 
 
 if __name__ == "__main__":
-    payload = {'id': argv[1]}
+    payload = {'id': int(argv[1])}
     user = requests.get('https://jsonplaceholder.typicode.com/users',
                         params=payload).json()
-    payload1 = {'userId': argv[1]}
+    payload1 = {'userId': int(argv[1])}
     todos = requests.get('https://jsonplaceholder.typicode.com/todos',
                          params=payload1).json()
     to_standard_output(user, todos)
     to_csv(user, todos)
-    to_json(user, todos)

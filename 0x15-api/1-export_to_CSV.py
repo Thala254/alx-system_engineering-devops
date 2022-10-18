@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""script that queries an api and gives responses in csv format"""
+"""
+script that fetches responses from an api and exports output as CSV
+"""
 from sys import argv
 import csv
 import requests

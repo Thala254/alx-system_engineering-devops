@@ -14,12 +14,12 @@ def count(todos=None):
 
 
 if __name__ == "__main__":
-    payload = {'id': argv[1]}
+    user_payload = {'id': int(argv[1])}
     user = requests.get('https://jsonplaceholder.typicode.com/users',
-                        params=payload).json()
-    payload1 = {'userId': argv[1]}
+                        params=user_payload).json()
+    todo_payload = {'userId': int(argv[1])}
     todos = requests.get('https://jsonplaceholder.typicode.com/todos',
-                         params=payload1).json()
+                         params=todo_payload).json()
     print("Employee {} is done with tasks ({}/{}):".format(
         user[0].get('name'),
         count(todos),
