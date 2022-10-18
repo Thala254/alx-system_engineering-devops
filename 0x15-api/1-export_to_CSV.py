@@ -1,52 +1,33 @@
 #!/usr/bin/python3
 """
-Script to make request from an API
+Using https://jsonplaceholder.typicode.com
+gathers data from API and exports it to CSV file
+Implemented using recursion
 """
-from sys import argv
-import csv
+import re
 import requests
+import sys
 
 
-def count(todos=None):
-    """Counts ompleted tasks"""
-    counter = 0
-    for todo in todos:
-        if todo.get('completed') is True:
-            counter += 1
-    return counter
+API = "https://jsonplaceholder.typicode.com"
+"""REST API url"""
 
 
-def to_standard_output(user=None, todos=None):
-    """prints reponse from api to standard output"""
-    print("Employee {} is done with tasks ({}/{}):".format(
-        user[0].get('name'),
-        count(todos),
-        len(todos)))
-    for todo in todos:
-        if todo.get('completed') is True:
-            print("\t {}".format(todo.get('title')))
-
-
-def to_csv(user=None, todos=None):
-    """prints response from an api to csv format"""
-    with open(f'{argv[1]}.csv', 'w') as csv_file:
-        fields = ["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"]
-        writer = csv.DictWriter(csv_file,
-                                fieldnames=fields,
-                                quoting=csv.QUOTE_ALL)
-        for todo in todos:
-            writer.writerow({"USER_ID": todo.get('userId'),
-                             "USERNAME": user[0].get('username'),
-                             "TASK_COMPLETED_STATUS": todo.get('completed'),
-                             "TASK_TITLE": todo.get('title')})
-
-
-if __name__ == "__main__":
-    payload = {'id': argv[1]}
-    user = requests.get('https://jsonplaceholder.typicode.com/users',
-                        params=payload).json()
-    payload1 = {'userId': argv[1]}
-    todos = requests.get('https://jsonplaceholder.typicode.com/todos',
-                         params=payload1).json()
-    to_standard_output(user, todos)
-    to_csv(user, todos)
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        if re.fullmatch(r'\d+', sys.argv[1]):
+            id = int(sys.argv[1])
+            user_res = requests.get('{}/users/{}'.format(API, id)).json()
+            todos_res = requests.get('{}/todos'.format(API)).json()
+            user_name = user_res.get('username')
+            todos = list(filter(lambda x: x.get('userId') == id, todos_res))
+            with open('{}.csv'.format(id), 'w') as file:
+                for todo in todos:
+                    file.write(
+                        '"{}","{}","{}","{}"\n'.format(
+                            id,
+                            user_name,
+                            todo.get('completed'),
+                            todo.get('title')
+                        )
+                    )
