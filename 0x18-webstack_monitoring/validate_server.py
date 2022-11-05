@@ -13,7 +13,8 @@ configuration = Configuration()
 with ApiClient(configuration) as api_client:
     api_instance = HostsApi(api_client)
     response = api_instance.list_hosts(
-        filter="env:ci",
+        include_hosts_metadata=True,
+        # filter="env:ci",
     )
 
     print(response)
