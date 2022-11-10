@@ -26,8 +26,8 @@ server {
     }
  
     # Serve /airbnb-onepage/ route on AirBnB_clone_v2
-    location = /airbnb-onepage/ {
-        proxy_pass http://0.0.0.0:5000/airbnb-onepage/;
+    location /airbnb-onepage/ {
+        proxy_pass http://0.0.0.0:5000;
     }
 
     # 404 error page
